@@ -1,11 +1,11 @@
-use picture_namer::picture_namer_set_state;
 use eframe::egui;
 use egui::{FontFamily, FontId, RichText, TextStyle};
 
 mod picture_namer;
 
-const VERSION: &str = "version 0.0.1";
+const VERSION: &str = "version 1.0.0";
 const NAME: &str = "rusty picture namer gui ";
+const YEAR: &str = "2022";
 const GITHUB: &str = "https://github.com/sky5hr0ud/rusty_picture_namer_gui";
 
 #[derive(Default)]
@@ -14,6 +14,7 @@ pub struct PictureNamerGUI {
     folder_selected: bool,
     use_alternate: bool,
     list_of_filetypes_path: Option<String>,
+    result: (bool, String),
 }
 
 #[inline]
@@ -50,6 +51,7 @@ impl PictureNamerGUI {
             folder_selected: false,
             use_alternate: false,
             list_of_filetypes_path: Some(String::from("")),
+            result: (false, String::from("Filenamer has not ran.")),
         }
     }
 }
@@ -60,6 +62,7 @@ impl eframe::App for PictureNamerGUI {
             ui.vertical_centered(|header| {
                 header.heading(NAME);
                 header.small(VERSION);
+                header.small(YEAR);
                 header.hyperlink_to("Github", GITHUB);
             });
 
@@ -116,14 +119,17 @@ impl eframe::App for PictureNamerGUI {
 
             ui.add_enabled_ui(self.folder_selected, |start| {
                 if start.button(RichText::new("Start!").text_style(big_button()).strong()).clicked() {
-                    pass_to_picture_namer(&self.picked_path, self.use_alternate, &self.list_of_filetypes_path);
-                }   
+                    self.result = pass_to_picture_namer(&self.picked_path, self.use_alternate, &self.list_of_filetypes_path);
+                }
+                start.monospace(self.result.1.clone());
             });
+            
+            
         });
     }
 }
 
-fn pass_to_picture_namer(picked_path: &Option<String>, use_alternate: bool, list_of_filetypes_path: &Option<String>) {
+fn pass_to_picture_namer(picked_path: &Option<String>, use_alternate: bool, list_of_filetypes_path: &Option<String>) -> (bool, String){
     let mut path_vec = Vec::new();
     if let Some(picked_path) = picked_path {
         path_vec.push(picked_path.to_string());
@@ -131,5 +137,5 @@ fn pass_to_picture_namer(picked_path: &Option<String>, use_alternate: bool, list
     if let Some(list_of_filetypes_path) = list_of_filetypes_path {
         path_vec.push(list_of_filetypes_path.to_string());
     }
-    picture_namer::picture_namer_set_state(path_vec, use_alternate);
+    return picture_namer::picture_namer_set_state(path_vec, use_alternate);
 }

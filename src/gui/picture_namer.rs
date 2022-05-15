@@ -3,7 +3,6 @@ use std::error::Error;
 use std::fs;
 use std::time::SystemTime;
 use std::cmp::Reverse;
-use std::env;
 use walkdir::WalkDir;
 use time::OffsetDateTime;
 
@@ -11,27 +10,24 @@ use time::OffsetDateTime;
 /// The other arg <list_of_filetyps> is optional. If used it will provide an alternate list of filetypes to use.
 ///
 /// If too many or not enough args are inputted the program will exit with -1. 
-///
-/// If an error occurred while running the program will exit with -2.
-pub fn picture_namer_set_state(paths: Vec<String>, alternate_list: bool) {
+pub fn picture_namer_set_state(paths_vec: Vec<String>, alternate_list: bool) -> (bool, String) {
     // result: (bool, String): result.0 = false means that an error occurred or the code did not run
     //                         result.0 = true means that the code ran and no unrecoverable errors occurred
     let mut result: (bool, String) = (false, String::from("Filenamer has not ran."));
     let mut folder_path = String::from("No folder path inputted.");
     let mut filetypes_path = String::from("No filetypes path inputted.");
-    let args_length = env::args().len();
-    if args_length < 2 || args_length > 3 {
-        println!("Need at least one arg! Required arg: <folder_path> Optional arg: <list_of_filetypes>");
-        std::process::exit(-1);
-    } else if args_length == 2 {
-        folder_path = env::args().nth(1).unwrap_or(String::from("Inputted folder path could not be parsed."));
+    let paths_vec_length = paths_vec.len();
+    if paths_vec_length != 2 {
+        result.1 = String::from("Error -1: Path vector element count incorrect.");
+    } else if !alternate_list {
+        folder_path = paths_vec[0].clone();
         result = match arg_parser_2(&folder_path) {
             Ok(output) => (output, String::from("Filenamer ran with no errors")),
             Err(err) => (false, err.to_string())
         };
-    } else if args_length == 3 {
-        folder_path = env::args().nth(1).unwrap_or(String::from("Inputted folder path could not be parsed."));
-        filetypes_path = env::args().nth(2).unwrap_or(String::from("Inputted filetypes path could not be parsed."));
+    } else if alternate_list {
+        folder_path = paths_vec[0].clone();
+        filetypes_path = paths_vec[1].clone();
         result = match arg_parser_3(&folder_path, &filetypes_path) {
             Ok(output) => (output, String::from("Filenamer ran with no errors")),
             Err(err) => (false, err.to_string())
@@ -46,10 +42,7 @@ pub fn picture_namer_set_state(paths: Vec<String>, alternate_list: bool) {
     } else {
         println!("{}", result.1);
     }
-    if result.0 == false {
-        std::process::exit(-2);
-    }
-    std::process::exit(0);
+    return result;
 }
 
 /// Parses the arg for the path to the directory containing the files to be renamed. 

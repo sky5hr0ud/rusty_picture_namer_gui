@@ -1,5 +1,5 @@
 [package]
-name = "rusty_picture_namer"
+name = "rusty_picture_namer_gui"
 version = "1.0.0"
 edition = "2021"
 
