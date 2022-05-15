@@ -13,7 +13,7 @@ use time::OffsetDateTime;
 /// If too many or not enough args are inputted the program will exit with -1. 
 ///
 /// If an error occurred while running the program will exit with -2.
-fn main() {
+pub fn picture_namer_set_state(paths: Vec<String>, alternate_list: bool) {
     // result: (bool, String): result.0 = false means that an error occurred or the code did not run
     //                         result.0 = true means that the code ran and no unrecoverable errors occurred
     let mut result: (bool, String) = (false, String::from("Filenamer has not ran."));
@@ -79,7 +79,7 @@ fn arg_parser_3(folder_path: &String, filetypes_path: &String) -> Result<bool, B
 /// # Behavior
 /// If a path to a directory that does not exist is provided the function will not return an error. If a directory doesn't exist 
 /// it means that there are no files to be renamed.
-pub fn directory_walker(folder_path: &str, filetypes: Vec<String>) -> Result<bool, Box<dyn Error>> {
+fn directory_walker(folder_path: &str, filetypes: Vec<String>) -> Result<bool, Box<dyn Error>> {
     println!("Preparing to rename files in {}", folder_path);
     let mut directories: Vec<walkdir::DirEntry> = WalkDir::new(folder_path).into_iter().filter_map(|e| e.ok()).collect();
     directories.retain(|entry| fs::metadata(entry.path()).unwrap().is_dir());
@@ -167,7 +167,7 @@ fn get_filetypes(filetypes_file: &str) -> Result<Vec<String>, Box<dyn Error>> {
 }
 
 /// Uses a default list of filetypes. The default list is read in as a String to keep this function similar to the main get_filetypes function.
-pub fn alt_get_filetypes(contents: String) -> Result<Vec<String>, Box<dyn Error>> {
+fn alt_get_filetypes(contents: String) -> Result<Vec<String>, Box<dyn Error>> {
     let expanded_contents = contents.to_ascii_lowercase() + &contents.to_ascii_uppercase();
     let mut contents_vec: Vec<String> = expanded_contents.split_whitespace().map(str::to_string).collect();
     contents_vec.retain(|entry| entry.starts_with("."));
