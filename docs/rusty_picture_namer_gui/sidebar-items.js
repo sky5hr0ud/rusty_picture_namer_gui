@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["main","Opens a GUI titled “rusty picture namer gui”."]],"mod":[["gui",""]]});

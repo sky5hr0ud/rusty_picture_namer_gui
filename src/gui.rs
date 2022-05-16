@@ -56,6 +56,7 @@ impl PictureNamerGUI {
     }
 }
 
+/// This is the GUI code.
 impl eframe::App for PictureNamerGUI {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
@@ -122,9 +123,7 @@ impl eframe::App for PictureNamerGUI {
                     self.result = pass_to_picture_namer(&self.picked_path, self.use_alternate, &self.list_of_filetypes_path);
                 }
                 start.monospace(self.result.1.clone());
-            });
-            
-            
+            }); 
         });
     }
 }

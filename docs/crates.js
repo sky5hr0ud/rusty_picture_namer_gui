@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["rusty_picture_namer"];
+window.ALL_CRATES = ["rusty_picture_namer_gui"];

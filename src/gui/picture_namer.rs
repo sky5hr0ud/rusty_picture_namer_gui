@@ -22,14 +22,14 @@ pub fn picture_namer_set_state(paths_vec: Vec<String>, alternate_list: bool) -> 
     } else if !alternate_list {
         folder_path = paths_vec[0].clone();
         result = match arg_parser_2(&folder_path) {
-            Ok(output) => (output, String::from("Filenamer ran with no errors")),
+            Ok(output) => (true, output.to_string()),
             Err(err) => (false, err.to_string())
         };
     } else if alternate_list {
         folder_path = paths_vec[0].clone();
         filetypes_path = paths_vec[1].clone();
         result = match arg_parser_3(&folder_path, &filetypes_path) {
-            Ok(output) => (output, String::from("Filenamer ran with no errors")),
+            Ok(output) => (true, output.to_string()),
             Err(err) => (false, err.to_string())
         };        
     }
@@ -40,7 +40,8 @@ pub fn picture_namer_set_state(paths_vec: Vec<String>, alternate_list: bool) -> 
             Err(err) => eprintln!("ERROR: {} occurred when attempting to write log file in location: {}.", err.to_string(), folder_path),
         };
     } else {
-        println!("{}", result.1);
+        println!("{}", String::from("Renamed ") + &result.1 + " files!");
+        result.1 = String::from("Renamed ") + &result.1 + " files in " + &paths_vec[0];
     }
     return result;
 }
@@ -51,28 +52,28 @@ pub fn picture_namer_set_state(paths_vec: Vec<String>, alternate_list: bool) -> 
 /// .jpg .jpeg .png .mp4 .dng .gif .nef .bmp .jpe .jif .jfif .jfi
 /// .webp .tiff .tif .psd .raw .arw .cr2 .nrw .k25 .dib .heif .heic .ind .indd .indt .jp2 .j2k .jpf
 /// .jpx .jpm .mj2 .svg .svgz .ai .eps .pdf .xcf .cdr .sr2 .orf .bin .afphoto .mkv
-fn arg_parser_2(folder_path: &String) -> Result<bool, Box<dyn Error>> {
+fn arg_parser_2(folder_path: &String) -> Result<u32, Box<dyn Error>> {
     let filetypes = include_str!("_list_of_filetypes.txt").to_string();
     let alt_filetypes = alt_get_filetypes(filetypes)?;
-    directory_walker(&folder_path, alt_filetypes)?;
-    return Ok(true)
+    let files_renamed = directory_walker(&folder_path, alt_filetypes)?;
+    return Ok(files_renamed)
 }
 
 /// Parses two inputted args where the first one is the path to the directory with the files to be renamed 
 /// and the second one is the path to a list containing filetypes. This supports additional file formats.
 ///
 /// "// and "# can be used as comments in the file. The file is read in as a String.
-fn arg_parser_3(folder_path: &String, filetypes_path: &String) -> Result<bool, Box<dyn Error>> {
+fn arg_parser_3(folder_path: &String, filetypes_path: &String) -> Result<u32, Box<dyn Error>> {
     let filetypes = get_filetypes(&filetypes_path)?;
-    directory_walker(&folder_path, filetypes)?;
-    return Ok(true)
+    let files_renamed = directory_walker(&folder_path, filetypes)?;
+    return Ok(files_renamed)
 }
 
 /// Walks the directories to ensure that all pictures get renamed. If there are pictures in subdirectories they will get renamed.
 /// # Behavior
 /// If a path to a directory that does not exist is provided the function will not return an error. If a directory doesn't exist 
 /// it means that there are no files to be renamed.
-fn directory_walker(folder_path: &str, filetypes: Vec<String>) -> Result<bool, Box<dyn Error>> {
+fn directory_walker(folder_path: &str, filetypes: Vec<String>) -> Result<u32, Box<dyn Error>> {
     println!("Preparing to rename files in {}", folder_path);
     let mut directories: Vec<walkdir::DirEntry> = WalkDir::new(folder_path).into_iter().filter_map(|e| e.ok()).collect();
     directories.retain(|entry| fs::metadata(entry.path()).unwrap().is_dir());
@@ -84,7 +85,7 @@ fn directory_walker(folder_path: &str, filetypes: Vec<String>) -> Result<bool, B
         files_renamed += file_namer(directory.path(), &filetypes)?;
     }
     println!("Renamed {} files", files_renamed);
-    return Ok(true)
+    return Ok(files_renamed)
 }
 
 /// This renames the files with the specified filetypes.

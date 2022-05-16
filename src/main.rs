@@ -4,6 +4,7 @@ use eframe::egui;
 
 mod gui;
 
+/// Opens a GUI titled "rusty picture namer gui".
 fn main() {
     let options = eframe::NativeOptions {
         drag_and_drop_support: true,
