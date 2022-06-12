@@ -3,10 +3,11 @@ use egui::{FontFamily, FontId, RichText, TextStyle};
 
 mod picture_namer;
 
-const VERSION: &str = "version 1.0.0";
+const VERSION: &str = "version 1.0.1";
 const NAME: &str = "rusty picture namer gui ";
 const YEAR: &str = "2022";
 const GITHUB: &str = "https://github.com/sky5hr0ud/rusty_picture_namer_gui";
+const DEFAULT_FILETYPES: &str = ".jpg .jpeg .png .mp4 .dng .gif .nef .bmp .jpe .jif .jfif .jfi .webp .tiff .tif .psd .raw .arw .cr2 .nrw .k25 .dib .heif .heic .ind .indd .indt .jp2 .j2k .jpf .jpx .jpm .mj2 .svg .svgz .ai .eps .pdf .xcf .cdr .sr2 .orf .bin .afphoto .mkv";
 
 #[derive(Default)]
 pub struct PictureNamerGUI {
@@ -70,7 +71,9 @@ impl eframe::App for PictureNamerGUI {
             ui.separator();
 
             ui.horizontal(|select_folder| {
-                select_folder.label(RichText::new("Select a folder").text_style(heading2()).strong());
+                select_folder.label(RichText::new("Select a folder").text_style(heading2()).strong()).on_hover_ui(|hover_ui| {
+                    hover_ui.monospace("Select a folder containing files to be renamed");
+                });
                 if select_folder.button("Open Folder...").clicked() {
                     if let Some(path) = rfd::FileDialog::new().pick_folder() {
                     self.picked_path = Some(path.display().to_string());
@@ -92,7 +95,14 @@ impl eframe::App for PictureNamerGUI {
             ui.horizontal(|filetypes_text| {
                 filetypes_text.label(RichText::new("Filetypes").text_style(heading2()).strong());
                 filetypes_text.set_visible(!self.use_alternate);
-                filetypes_text.label("(Default)");
+                filetypes_text.label("(Default)").on_hover_ui(|hover_ui| {
+                    hover_ui.monospace(DEFAULT_FILETYPES);
+                });
+                filetypes_text.collapsing("Click to see default filetypes...", |default_filetypes| {
+                    default_filetypes.horizontal_wrapped(|filetypes| {
+                        filetypes.monospace(DEFAULT_FILETYPES);
+                    });
+                });
             });
 
             ui.horizontal(|alt_filetypes| {
@@ -123,7 +133,7 @@ impl eframe::App for PictureNamerGUI {
                     self.result = pass_to_picture_namer(&self.picked_path, self.use_alternate, &self.list_of_filetypes_path);
                 }
                 start.monospace(self.result.1.clone());
-            }); 
+            });
         });
     }
 }

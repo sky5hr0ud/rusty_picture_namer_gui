@@ -143,15 +143,26 @@
 <span id="138">138</span>
 <span id="139">139</span>
 <span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">eframe::egui</span>;
 <span class="kw">use</span> <span class="ident">egui</span>::{<span class="ident">FontFamily</span>, <span class="ident">FontId</span>, <span class="ident">RichText</span>, <span class="ident">TextStyle</span>};
 
 <span class="kw">mod</span> <span class="ident">picture_namer</span>;
 
-<span class="kw">const</span> <span class="ident">VERSION</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;version 1.0.0&quot;</span>;
+<span class="kw">const</span> <span class="ident">VERSION</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;version 1.0.1&quot;</span>;
 <span class="kw">const</span> <span class="ident">NAME</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;rusty picture namer gui &quot;</span>;
 <span class="kw">const</span> <span class="ident">YEAR</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;2022&quot;</span>;
 <span class="kw">const</span> <span class="ident">GITHUB</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;https://github.com/sky5hr0ud/rusty_picture_namer_gui&quot;</span>;
+<span class="kw">const</span> <span class="ident">DEFAULT_FILETYPES</span>: <span class="kw-2">&amp;</span><span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;.jpg .jpeg .png .mp4 .dng .gif .nef .bmp .jpe .jif .jfif .jfi .webp .tiff .tif .psd .raw .arw .cr2 .nrw .k25 .dib .heif .heic .ind .indd .indt .jp2 .j2k .jpf .jpx .jpm .mj2 .svg .svgz .ai .eps .pdf .xcf .cdr .sr2 .orf .bin .afphoto .mkv&quot;</span>;
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Default</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">PictureNamerGUI</span> {
@@ -215,7 +226,9 @@
             <span class="ident">ui</span>.<span class="ident">separator</span>();
 
             <span class="ident">ui</span>.<span class="ident">horizontal</span>(<span class="op">|</span><span class="ident">select_folder</span><span class="op">|</span> {
-                <span class="ident">select_folder</span>.<span class="ident">label</span>(<span class="ident">RichText::new</span>(<span class="string">&quot;Select a folder&quot;</span>).<span class="ident">text_style</span>(<span class="ident">heading2</span>()).<span class="ident">strong</span>());
+                <span class="ident">select_folder</span>.<span class="ident">label</span>(<span class="ident">RichText::new</span>(<span class="string">&quot;Select a folder&quot;</span>).<span class="ident">text_style</span>(<span class="ident">heading2</span>()).<span class="ident">strong</span>()).<span class="ident">on_hover_ui</span>(<span class="op">|</span><span class="ident">hover_ui</span><span class="op">|</span> {
+                    <span class="ident">hover_ui</span>.<span class="ident">monospace</span>(<span class="string">&quot;Select a folder containing files to be renamed&quot;</span>);
+                });
                 <span class="kw">if</span> <span class="ident">select_folder</span>.<span class="ident">button</span>(<span class="string">&quot;Open Folder...&quot;</span>).<span class="ident">clicked</span>() {
                     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">path</span>) <span class="op">=</span> <span class="ident">rfd::FileDialog::new</span>().<span class="ident">pick_folder</span>() {
                     <span class="self">self</span>.<span class="ident">picked_path</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">path</span>.<span class="ident">display</span>().<span class="ident">to_string</span>());
@@ -237,7 +250,14 @@
             <span class="ident">ui</span>.<span class="ident">horizontal</span>(<span class="op">|</span><span class="ident">filetypes_text</span><span class="op">|</span> {
                 <span class="ident">filetypes_text</span>.<span class="ident">label</span>(<span class="ident">RichText::new</span>(<span class="string">&quot;Filetypes&quot;</span>).<span class="ident">text_style</span>(<span class="ident">heading2</span>()).<span class="ident">strong</span>());
                 <span class="ident">filetypes_text</span>.<span class="ident">set_visible</span>(<span class="op">!</span><span class="self">self</span>.<span class="ident">use_alternate</span>);
-                <span class="ident">filetypes_text</span>.<span class="ident">label</span>(<span class="string">&quot;(Default)&quot;</span>);
+                <span class="ident">filetypes_text</span>.<span class="ident">label</span>(<span class="string">&quot;(Default)&quot;</span>).<span class="ident">on_hover_ui</span>(<span class="op">|</span><span class="ident">hover_ui</span><span class="op">|</span> {
+                    <span class="ident">hover_ui</span>.<span class="ident">monospace</span>(<span class="ident">DEFAULT_FILETYPES</span>);
+                });
+                <span class="ident">filetypes_text</span>.<span class="ident">collapsing</span>(<span class="string">&quot;Click to see default filetypes...&quot;</span>, <span class="op">|</span><span class="ident">default_filetypes</span><span class="op">|</span> {
+                    <span class="ident">default_filetypes</span>.<span class="ident">horizontal_wrapped</span>(<span class="op">|</span><span class="ident">filetypes</span><span class="op">|</span> {
+                        <span class="ident">filetypes</span>.<span class="ident">monospace</span>(<span class="ident">DEFAULT_FILETYPES</span>);
+                    });
+                });
             });
 
             <span class="ident">ui</span>.<span class="ident">horizontal</span>(<span class="op">|</span><span class="ident">alt_filetypes</span><span class="op">|</span> {
@@ -268,7 +288,7 @@
                     <span class="self">self</span>.<span class="ident">result</span> <span class="op">=</span> <span class="ident">pass_to_picture_namer</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">picked_path</span>, <span class="self">self</span>.<span class="ident">use_alternate</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">list_of_filetypes_path</span>);
                 }
                 <span class="ident">start</span>.<span class="ident">monospace</span>(<span class="self">self</span>.<span class="ident">result</span>.<span class="number">1</span>.<span class="ident">clone</span>());
-            }); 
+            });
         });
     }
 }
