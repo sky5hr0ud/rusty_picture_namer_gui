@@ -3,11 +3,11 @@ use egui::{FontFamily, FontId, RichText, TextStyle};
 
 mod picture_namer;
 
-const VERSION: &str = "version 1.0.1";
+const VERSION: &str = "version 1.0.2";
 const NAME: &str = "rusty picture namer gui ";
 const YEAR: &str = "2022";
 const GITHUB: &str = "https://github.com/sky5hr0ud/rusty_picture_namer_gui";
-const DEFAULT_FILETYPES: &str = ".jpg .jpeg .png .mp4 .dng .gif .nef .bmp .jpe .jif .jfif .jfi .webp .tiff .tif .psd .raw .arw .cr2 .nrw .k25 .dib .heif .heic .ind .indd .indt .jp2 .j2k .jpf .jpx .jpm .mj2 .svg .svgz .ai .eps .pdf .xcf .cdr .sr2 .orf .bin .afphoto .mkv";
+const DEFAULT_FILETYPES: &str = ".jpg .jpeg .png .mp4 .dng .gif .nef .bmp .jpe .jif .jfif .jfi .webp .tiff .tif .psd .raw .arw .cr2 .nrw .k25 .dib .heif .heic .ind .indd .indt .jp2 .j2k .jpf .jpx .jpm .mj2 .svg .svgz .ai .eps .pdf .xcf .cdr .sr2 .orf .bin .afphoto .mkv .mov";
 
 #[derive(Default)]
 pub struct PictureNamerGUI {
@@ -146,5 +146,5 @@ fn pass_to_picture_namer(picked_path: &Option<String>, use_alternate: bool, list
     if let Some(list_of_filetypes_path) = list_of_filetypes_path {
         path_vec.push(list_of_filetypes_path.to_string());
     }
-    return picture_namer::picture_namer_set_state(path_vec, use_alternate);
+    picture_namer::picture_namer_set_state(path_vec, use_alternate)
 }

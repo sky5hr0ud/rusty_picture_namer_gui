@@ -43,7 +43,7 @@ pub fn picture_namer_set_state(paths_vec: Vec<String>, alternate_list: bool) -> 
         println!("{}", String::from("Renamed ") + &result.1 + " files!");
         result.1 = String::from("Renamed ") + &result.1 + " files in " + &paths_vec[0];
     }
-    return result;
+    result
 }
 
 /// Parses the arg for the path to the directory containing the files to be renamed. 
@@ -51,12 +51,12 @@ pub fn picture_namer_set_state(paths_vec: Vec<String>, alternate_list: bool) -> 
 /// # Filetypes in List
 /// .jpg .jpeg .png .mp4 .dng .gif .nef .bmp .jpe .jif .jfif .jfi
 /// .webp .tiff .tif .psd .raw .arw .cr2 .nrw .k25 .dib .heif .heic .ind .indd .indt .jp2 .j2k .jpf
-/// .jpx .jpm .mj2 .svg .svgz .ai .eps .pdf .xcf .cdr .sr2 .orf .bin .afphoto .mkv
+/// .jpx .jpm .mj2 .svg .svgz .ai .eps .pdf .xcf .cdr .sr2 .orf .bin .afphoto .mkv .mov
 fn arg_parser_2(folder_path: &String) -> Result<u32, Box<dyn Error>> {
     let filetypes = include_str!("_list_of_filetypes.txt").to_string();
     let alt_filetypes = alt_get_filetypes(filetypes)?;
     let files_renamed = directory_walker(&folder_path, alt_filetypes)?;
-    return Ok(files_renamed)
+    Ok(files_renamed)
 }
 
 /// Parses two inputted args where the first one is the path to the directory with the files to be renamed 
@@ -66,7 +66,7 @@ fn arg_parser_2(folder_path: &String) -> Result<u32, Box<dyn Error>> {
 fn arg_parser_3(folder_path: &String, filetypes_path: &String) -> Result<u32, Box<dyn Error>> {
     let filetypes = get_filetypes(&filetypes_path)?;
     let files_renamed = directory_walker(&folder_path, filetypes)?;
-    return Ok(files_renamed)
+    Ok(files_renamed)
 }
 
 /// Walks the directories to ensure that all pictures get renamed. If there are pictures in subdirectories they will get renamed.
@@ -85,7 +85,7 @@ fn directory_walker(folder_path: &str, filetypes: Vec<String>) -> Result<u32, Bo
         files_renamed += file_namer(directory.path(), &filetypes)?;
     }
     println!("Renamed {} files", files_renamed);
-    return Ok(files_renamed)
+    Ok(files_renamed)
 }
 
 /// This renames the files with the specified filetypes.
@@ -116,7 +116,7 @@ fn file_namer(folder_path: &std::path::Path, filetypes: &Vec<String>) -> Result<
         }
     }
     println!("Renamed {} files in {}", files_renamed, folder_path.display());
-    return Ok(files_renamed)
+    Ok(files_renamed)
 }
 
 /// Counts the files to be renamed. Some files may already have the directory name already prepended so no rename needs to be done.
@@ -134,7 +134,7 @@ fn file_counter(paths: &Vec<fs::DirEntry>) -> Result<(u32, u32),  Box<dyn Error>
         } 
         files += 1;
     }
-    return Ok((files_already_modified, files))
+    Ok((files_already_modified, files))
 }
 
 /// Reads a text file into a String and parses it into a vector containing the filetypes.
@@ -157,7 +157,7 @@ fn get_filetypes(filetypes_file: &str) -> Result<Vec<String>, Box<dyn Error>> {
     contents_vec.retain(|entry| entry.starts_with("."));
     contents_vec.retain(|entry| !entry.contains("#"));
     contents_vec.retain(|entry| !entry.contains("//"));
-    return Ok(contents_vec)
+    Ok(contents_vec)
 }
 
 /// Uses a default list of filetypes. The default list is read in as a String to keep this function similar to the main get_filetypes function.
@@ -166,7 +166,7 @@ fn alt_get_filetypes(contents: String) -> Result<Vec<String>, Box<dyn Error>> {
     let mut contents_vec: Vec<String> = expanded_contents.split_whitespace().map(str::to_string).collect();
     contents_vec.retain(|entry| entry.starts_with("."));
     contents_vec.retain(|entry| !entry.contains("#"));
-    return Ok(contents_vec)
+    Ok(contents_vec)
 }
 
 /// Creates and returns a String of length new_length with leading zeros.
@@ -181,7 +181,7 @@ fn zfill(str: String, new_length: usize) -> String {
             index += 1;
         }
     }
-    return new_string;
+    new_string
 }
 
 /// Checks to make sure that a situation where the length of the string with leading zeros can support the amount of files in the directory.
@@ -189,7 +189,7 @@ fn lead_zeros(mut lead_zeros: usize, file_count: u32) -> usize {
     if file_count.to_string().len() >= lead_zeros {
         lead_zeros += 2;
     }
-    return lead_zeros
+    lead_zeros
 }
 
 /// This is used since option_result_contains for vectors is unstable. This checks is a vector made of Strings contains a string. 
@@ -202,7 +202,7 @@ fn vec_contains(vec: &Vec<String>, str: &str) -> bool {
             contains = true;
         }
     }
-    return contains
+    contains
 }
 
 /// Returns how long ago a file was modified. A time to compare has to be provided to ensure that all comparisions are compared to the same time.
@@ -212,7 +212,7 @@ fn vec_contains(vec: &Vec<String>, str: &str) -> bool {
 fn modified_duration(time: std::time::SystemTime, file: &std::path::Path) -> u128 {
     let modified_time = fs::metadata(file).unwrap().modified();
     let duration = time.duration_since(modified_time.unwrap());
-    return duration.unwrap().as_millis()
+    duration.unwrap().as_millis()
 }
 
 /// Writes the contents of String: log_contents into a ".log" file with the name: rusty_picture_namer_YYYY-MM-DD_HHMMSS.log
@@ -231,5 +231,5 @@ fn log_writer(folder_path: &String, log_contents: String) -> Result<String, Box<
     log_file.write_all(&timestamp.as_bytes())?;
     log_file.write_all(String::from("\n").as_bytes())?;
     log_file.write_all(log_contents.as_bytes())?;
-    return Ok(log_name)
+    Ok(log_name)
 }
