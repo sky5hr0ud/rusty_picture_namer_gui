@@ -49,3 +49,4 @@
 .avif
 .av1
 .webm
+.jxr

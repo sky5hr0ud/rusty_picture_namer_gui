@@ -3,11 +3,11 @@ use egui::{FontFamily, FontId, RichText, TextStyle};
 
 mod picture_namer;
 
-const VERSION: &str = "version 1.0.3";
+const VERSION: &str = "version 1.0.4";
 const NAME: &str = "rusty picture namer gui ";
 const YEAR: &str = "2024";
 const GITHUB: &str = "https://github.com/sky5hr0ud/rusty_picture_namer_gui";
-const DEFAULT_FILETYPES: &str = ".jpg .jpeg .png .mp4 .dng .gif .nef .bmp .jpe .jif .jfif .jfi .webp .tiff .tif .psd .raw .arw .cr2 .nrw .k25 .dib .heif .heic .ind .indd .indt .jp2 .j2k .jpf .jpx .jpm .mj2 .svg .svgz .ai .eps .pdf .xcf .cdr .sr2 .orf .bin .afphoto .mkv .mov .exr .avif .av1 .webm";
+const DEFAULT_FILETYPES: &str = ".jpg .jpeg .png .mp4 .dng .gif .nef .bmp .jpe .jif .jfif .jfi .webp .tiff .tif .psd .raw .arw .cr2 .nrw .k25 .dib .heif .heic .ind .indd .indt .jp2 .j2k .jpf .jpx .jpm .mj2 .svg .svgz .ai .eps .pdf .xcf .cdr .sr2 .orf .bin .afphoto .mkv .mov .exr .avif .av1 .webm .jxr";
 
 #[derive(Default)]
 pub struct PictureNamerGUI {
