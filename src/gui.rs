@@ -1,7 +1,8 @@
-use eframe::egui;
-use egui::{FontFamily, FontId, RichText, TextStyle};
+pub(crate) use eframe::egui;
+use egui::{FontId, RichText, TextStyle, FontFamily};
 
 mod picture_namer;
+pub mod exif_functions;
 
 const VERSION: &str = "version 1.0.4";
 const NAME: &str = "rusty picture namer gui ";
